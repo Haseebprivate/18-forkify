@@ -12,6 +12,25 @@ class RecipeView extends View {
       window.addEventListener(event, handler)
     );
   }
+
+  addHandlerUpdateServings(handler) {
+    this._parentElement.addEventListener("click", (event) => {
+      const btn = event.target.closest(".btn--tiny")?.dataset.updateServings;
+      if (!btn) return;
+      const servings =
+        btn === "increase" ? this._data.servings + 1 : this._data.servings - 1;
+      servings >= 1 ? handler(servings) : "";
+    });
+  }
+  addHandlerBookMark(handler) {
+    this._parentElement.addEventListener("click", (event) => {
+      const btn = event.target.closest(".btn--bookmark");
+      if (btn) {
+        handler();
+      }
+      console.log(btn);
+    });
+  }
   _generateMarkup() {
     return `<figure class="recipe__fig">
               <img src="${this._data.image}" alt="${
@@ -42,12 +61,12 @@ class RecipeView extends View {
                 <span class="recipe__info-text">servings</span>
     
                 <div class="recipe__info-buttons">
-                  <button class="btn--tiny btn--increase-servings">
+                  <button data-update-servings='decrease' class="btn--tiny btn--increase-servings">
                     <svg>
                       <use href="${icons}#icon-minus-circle"></use>
                     </svg>
                   </button>
-                  <button class="btn--tiny btn--increase-servings">
+                  <button data-update-servings='increase' class="btn--tiny btn--increase-servings">
                     <svg>
                       <use href="${icons}#icon-plus-circle"></use>
                     </svg>
@@ -58,9 +77,11 @@ class RecipeView extends View {
               <div class="recipe__user-generated">
                 
               </div>
-              <button class="btn--round">
+              <button class="btn--round btn--bookmark">
                 <svg class="">
-                  <use href="${icons}#icon-bookmark-fill"></use>
+                  <use href="${icons}#icon-bookmark${
+      this._data.bookMarked ? "-fill" : ""
+    }"></use>
                 </svg>
               </button>
             </div>

@@ -7,6 +7,8 @@ import {
   state,
   loadSearchRecipe,
   getPageResults,
+  updateServings,
+  addBookMark,
 } from "./model.js";
 import recipeView from "./views/recipeView.js";
 import searchView from "./views/searchView.js";
@@ -34,6 +36,8 @@ const showRecipe = async () => {
     recipeView.renderSpinner(recipeContainer);
     // loading recipe
 
+    // update results view
+    resultsView.update(getPageResults());
     await loadRecipe(id);
     let recipe = state.recipe;
     recipeView.render(recipe);
@@ -63,10 +67,28 @@ const paginationButtonClick = function (goto) {
   console.log("pagination clicked");
 };
 
+const controlServings = function (servings) {
+  // update the recipe servings
+  updateServings(servings);
+  // update the recipe view
+  console.log(state.recipe);
+  recipeView.update(state.recipe);
+};
+
+const controlAddBookMark = function () {
+  addBookMark(state.recipe);
+
+  recipeView.update(state.recipe);
+  console.log(state.recipe);
+};
+
 const init = function () {
   recipeView.addHandlerRender(showRecipe);
   searchView.addHandleSearch(controlSearchResults);
   paginationView.addHandlerClick(paginationButtonClick);
+  recipeView.addHandlerUpdateServings(controlServings);
+  recipeView.addHandlerBookMark(controlAddBookMark);
+  // controlServings();
 };
 
 init();

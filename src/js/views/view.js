@@ -13,6 +13,37 @@ export default class View {
     this._parentElement.insertAdjacentHTML("afterbegin", html);
   }
 
+  update(data) {
+    // if (!data || (Array.isArray(data) && data.length === 0)) {
+    //   this.handlerError();
+    //   return;
+    // }
+    this._data = data;
+    const newHtml = this._generateMarkup();
+    const newDom = document.createRange().createContextualFragment(newHtml);
+    const newElements = Array.from(newDom.querySelectorAll("*"));
+    const currentElements = Array.from(
+      this._parentElement.querySelectorAll("*")
+    );
+
+    newElements.forEach((newElement, index) => {
+      const currentElement = currentElements[index];
+
+      if (
+        !newElement.isEqualNode(currentElement) &&
+        newElement.firstChild?.nodeValue.trim() !== ""
+      ) {
+        currentElement.textContent = newElement.textContent;
+      }
+
+      if (!newElement.isEqualNode(currentElement)) {
+        Array.from(newElement.attributes).forEach((attribute) => {
+          currentElement.setAttribute(attribute.name, attribute.value);
+        });
+      }
+    });
+  }
+
   renderSpinner() {
     const html = `
           <div class="spinner">
